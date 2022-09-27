@@ -1,0 +1,63 @@
+.movies {
+    --white: white;
+    --gray-100: #f7f7f7;
+    --gray-300: lightgray;
+    --gray-500: gray;
+    --black: black;
+
+    display: flex;
+    justify-content: center;
+
+    &__comments {
+    }
+
+    table {
+        display: block;
+        margin: 2rem auto;
+        border-collapse: collapse;
+
+        thead {
+            position: sticky;
+            top: 0px;
+            background-color: var(--white);
+            border: 1px solid var(--gray-500);
+
+            tr {
+                th {
+                    &:hover {
+                        cursor: pointer;
+                    }
+                    padding: 1rem;
+                }
+
+                input[type="text"], select {
+                    border: none;
+                    background-color: var(--gray-300);
+                    color: var(--black);
+                    padding: .5rem;
+                }
+            }
+        }
+
+        tbody {            
+            tr {
+                border: 1px solid var(--gray-300);
+
+                &:nth-child(even) {
+                    background-color: var(--gray-100);
+                }
+
+                &:hover{
+                    cursor: pointer;
+                    background-color: var(--gray-300);
+                }
+
+                td {
+                    white-space: nowrap;
+                    margin: 0;
+                    padding: 1.5rem 3rem;
+                }   
+            }
+        }
+    }
+}
