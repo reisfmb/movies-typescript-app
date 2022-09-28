@@ -1,20 +1,26 @@
-import {  useState } from "react";
-import { Column, Filter } from "./DataTable";
+import { DataTableConfig, Column, Filter, Sort } from "./DataTable";
 
 interface DataTableHeadProps<Item> {
+    CONFIG: DataTableConfig
     COLUMNS: Array<Column<Item>>
     FILTERS: Array<Filter<Item>>
+    SORTS: Array<Sort<Item>>
+    SORT_DIRECTIONS_STATE: { [key: string]: string }
     onSort: (accessor: keyof Item) => void
     onFilter: (accessor: keyof Item, inputValue: any) => void
 }
 
 function DataTableHead<Item>(props: DataTableHeadProps<Item>) {    
-    const { COLUMNS, FILTERS, onSort, onFilter } = props;
+    const { CONFIG, COLUMNS, FILTERS, SORTS, SORT_DIRECTIONS_STATE, onSort, onFilter } = props;
 
     return <thead>
         <tr>
             { 
-                COLUMNS.map(({view, accessor}) => <th onClick={ () => onSort(accessor) }>{ view }</th>) 
+                COLUMNS.map(({view, accessor}) => <th onClick={ () => onSort(accessor) }>
+                    { view }
+                    { ' ' }
+                    {  SORTS.find(sort => sort.accessor.toString() === accessor) &&  ShowSortIcon(SORT_DIRECTIONS_STATE[accessor.toString()], CONFIG.ICONS.ASC, CONFIG.ICONS.DESC) }
+                </th>) 
             }
         </tr>
 
@@ -35,6 +41,19 @@ function DataTableHead<Item>(props: DataTableHeadProps<Item>) {
 export { DataTableHead };
 
 // Helper Functions
+
+function ShowSortIcon(direction: string, iconASC: JSX.Element, iconDESC: JSX.Element) {
+    if (direction === 'ASC') {
+        return iconASC;
+    }
+
+    if (direction === 'DESC') {
+        return iconDESC;
+    }
+
+    return <></>;
+
+}
 
 // TODO: Implement support for other input types
 function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: keyof Item, inputValue: any) => void) {
@@ -60,6 +79,3 @@ function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: keyof Ite
     }
 }
 
-function getInitialSortObj<Item>(columns: Array<Column<Item>>) {
-    return columns.reduce((prev, curr) => ({...prev, [curr.accessor.toString()]: 'DESC'}), {} as { [key: string]: string });
-}

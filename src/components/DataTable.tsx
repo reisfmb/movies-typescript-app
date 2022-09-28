@@ -27,12 +27,15 @@ interface Sort<Item> {
     sort: (accessor: keyof Item, direction: 'ASC' | 'DESC', a: Item, b: Item) => number
 }
 
-
 interface DataTableConfig {
     SHOW_ALL_ITEMS: boolean
     NUM_ITEMS_TO_SHOW_INITTIALY?: number
     NUM_ITEMS_TO_INCREASE_PER_SCROLL?: number
-    SCROLL_REACHED_BOTTOM_STATE: boolean
+    SCROLL_REACHED_BOTTOM_STATE?: boolean
+    ICONS: {
+        ASC: JSX.Element
+        DESC: JSX.Element
+    }
 }
 interface DataTableProps<Item> {
     CONFIG: DataTableConfig
@@ -101,7 +104,7 @@ function DataTable<Item>(props: DataTableProps<Item>) {
     }
 
     return <table>
-        { DataTableHead<Item>({COLUMNS, FILTERS, onSort: onSortHandler, onFilter: onFilterHandler}) }
+        { DataTableHead<Item>({CONFIG, COLUMNS, FILTERS, SORTS, SORT_DIRECTIONS_STATE: currentSortDirectionsObj, onSort: onSortHandler, onFilter: onFilterHandler}) }
         { DataTableBody<Item>({CONFIG, DATA: filteredData, COLUMNS, TRANSFORMATIONS, onRowClick}) }
     </table>
 }

@@ -93,6 +93,10 @@
                 color: var(--white);
                 font-size: 1rem;
                 box-shadow: $box-shadow;
+
+                svg {
+                    color: var(--white);
+                }
     
                 tr {
                     &:first-child th {
@@ -125,7 +129,11 @@
                 }
             }
     
-            tbody {            
+            tbody {
+                svg {
+                    color: var(--blue);
+                }
+
                 tr {
                     text-align: center;
                     border: 1px solid var(--gray-300);

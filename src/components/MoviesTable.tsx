@@ -7,7 +7,7 @@ import { ImStarFull, ImStarHalf, ImStarEmpty } from 'react-icons/im';
 import { FiArrowLeft } from 'react-icons/fi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { BiMovie, BiCalendarAlt } from 'react-icons/bi';
-import { MdAttachMoney } from 'react-icons/md';
+import { MdAttachMoney, MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { TbClock, TbListSearch } from 'react-icons/tb';
 
 import { debounce } from 'lodash';
@@ -101,9 +101,10 @@ function MoviesTable() {
                 DataTable<Movie>({
                     CONFIG: {
                         SHOW_ALL_ITEMS: false,
+                        ICONS: { ASC: <MdOutlineKeyboardArrowUp/>, DESC: <MdOutlineKeyboardArrowDown/> },
                         NUM_ITEMS_TO_SHOW_INITTIALY: 20,
                         NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
-                        SCROLL_REACHED_BOTTOM_STATE: scrollReachedBottom
+                        SCROLL_REACHED_BOTTOM_STATE: scrollReachedBottom,
                     },
                     DATA: MOVIES,
                     COLUMNS: MOVIES_COLUMNS,
