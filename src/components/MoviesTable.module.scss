@@ -4,60 +4,150 @@
     --gray-300: lightgray;
     --gray-500: gray;
     --black: black;
+    --blue: #3f51b5;
+
+    $box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
+    $table-width: 1440px;
+    $table-height: 640px;
 
     display: flex;
     justify-content: center;
+    align-items: center;
 
     &__comments {
-    }
+        min-width: 500px;
+        background-color: var(--gray-100);
 
-    table {
-        display: block;
-        margin: 2rem auto;
-        border-collapse: collapse;
+        header {
+            background-color: var(--blue);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: left;
 
-        thead {
-            position: sticky;
-            top: 0px;
-            background-color: var(--white);
-            border: 1px solid var(--gray-500);
-
-            tr {
-                th {
-                    &:hover {
-                        cursor: pointer;
-                    }
-                    padding: 1rem;
-                }
-
-                input[type="text"], select {
-                    border: none;
-                    background-color: var(--gray-300);
-                    color: var(--black);
-                    padding: .5rem;
-                }
+            svg {
+                color: var(--white);
+                font-size: 1.5rem;
             }
-        }
 
-        tbody {            
-            tr {
-                border: 1px solid var(--gray-300);
+            button {
+                margin-right: 1rem;
+                border: none;
+                background-color: transparent;
+                transition: .1s;
 
-                &:nth-child(even) {
-                    background-color: var(--gray-100);
-                }
-
-                &:hover{
+                &:hover {
                     cursor: pointer;
-                    background-color: var(--gray-300);
+                    transform: translateX(-3px);
                 }
+            }
+        }
 
-                td {
-                    white-space: nowrap;
-                    margin: 0;
-                    padding: 1.5rem 3rem;
-                }   
+        ul {
+            padding: 1rem;
+
+            li {
+                list-style-type: none;
+                background-color: var(--blue);
+                color: var(--white);
+                padding: .5rem;
+                margin: 1rem;
+            }
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--white);
+            padding: .5rem 1.5rem;
+
+            input {
+                border: none;
+            }
+
+            button {
+                color: var(--white);
+                background-color: var(--blue);
+                padding: 1rem;
+                border: none;
+                border-radius: 50%;
             }
         }
     }
+
+    &__tableWrap {
+        height: $table-height;
+        overflow: scroll;
+        box-shadow: $box-shadow;
+
+        table {
+            width: $table-width;
+            height: $table-height;
+            border-collapse: collapse;
+            
+            thead {
+                position: sticky;
+                top: 0;
+                background-color: var(--blue);
+                color: var(--white);
+                font-size: 1rem;
+                box-shadow: $box-shadow;
+    
+                tr {
+                    &:first-child th {
+                        padding-top: 2.5rem;
+                    }
+                    &:last-child th {
+                        padding-bottom: 2.5rem;
+                    }
+
+                    th {
+                        &:hover {
+                            cursor: pointer;
+                        }
+                        padding: .5rem;
+                    }
+    
+                    input[type="text"], select {
+                        border: none;
+                        background-color: transparent;
+                        border: 1px solid var(--gray-100);
+                        color: var(--white);
+                        padding: .5rem;
+                    }
+                    ::placeholder {
+                        color: var(--gray-100);
+                    }
+                    option {
+                        color: black;
+                    }
+                }
+            }
+    
+            tbody {            
+                tr {
+                    text-align: center;
+                    border: 1px solid var(--gray-300);
+    
+                    &:nth-child(even) {
+                        background-color: var(--gray-100);
+                    }
+    
+                    &:hover{
+                        cursor: pointer;
+                        background-color: var(--gray-300);
+                    }
+    
+                    td {
+                        white-space: nowrap;
+                        margin: 0;
+                        padding: 1.5rem;
+                    }   
+                }
+            }
+        }
+    }
+
+    
 }

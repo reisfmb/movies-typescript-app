@@ -1,5 +1,16 @@
+import { useState } from 'react';
 import MovieJson from '../data/movies.json';
-import { Column, DataTable, Filter, Sort, Transform } from "./DataTable";
+import { Column, DataTable, Filter, Sort, SortDirection, Transform } from "./DataTable";
+import { Dialog } from './Dialog';
+import classes from './MoviesTable.module.scss';
+import { ImStarFull, ImStarHalf, ImStarEmpty } from 'react-icons/im';
+import { FiArrowLeft } from 'react-icons/fi';
+import { FaPaperPlane } from 'react-icons/fa';
+import { BiMovie, BiCalendarAlt } from 'react-icons/bi';
+import { MdAttachMoney } from 'react-icons/md';
+import { TbClock, TbListSearch } from 'react-icons/tb';
+
+import { debounce } from 'lodash';
 
 interface Movie {
     actors: Array<string>
@@ -20,7 +31,7 @@ const MOVIES: Array<Movie> = MovieJson.map(movie => ({
     ...movie,
     metascore: parseInt(movie.metascore),
     rank: parseInt(movie.rank),
-    rating: parseInt(movie.rating),
+    rating: parseFloat(movie.rating),
     revenue: movie.revenue ? parseInt(movie.revenue) : 0,
     runtime: parseInt(movie.runtime),
     votes: parseInt(movie.votes),
@@ -28,12 +39,12 @@ const MOVIES: Array<Movie> = MovieJson.map(movie => ({
 }));
 
 const MOVIES_COLUMNS: Array<Column<Movie>> = [
-    { accessor: 'title', name: 'Title' },
-    { accessor: 'year', name: 'Year' },
-    { accessor: 'runtime', name: 'Runtime' },
-    { accessor: 'revenue', name: 'Revenue' },
-    { accessor: 'rating', name: 'Rating' },
-    { accessor: 'genre', name: 'Genres' },
+    { accessor: 'title', view: <><BiMovie/> {'Title'}</> },
+    { accessor: 'year', view: <><BiCalendarAlt/> {'Year'}</> },
+    { accessor: 'runtime', view: <><TbClock/> {'Runtime'}</> },
+    { accessor: 'revenue', view: <><MdAttachMoney/> {'Revenue'}</> },
+    { accessor: 'rating', view: <><ImStarEmpty/> {'Rating'}</> },
+    { accessor: 'genre', view: <><TbListSearch/> {'Genres'}</> },
 ]
 
 const MOVIES_TRANSFORMATIONS: Array<Transform<Movie>> = [
@@ -59,13 +70,77 @@ const MOVIES_SORTING: Array<Sort<Movie>> = [
 ]
 
 function MoviesTable() {
-    return DataTable<Movie>({
-        DATA: MOVIES,
-        COLUMNS: MOVIES_COLUMNS,
-        TRANSFORMATIONS: MOVIES_TRANSFORMATIONS,
-        FILTERS: MOVIES_FILTERS,
-        SORTS: MOVIES_SORTING
-    });
+    const [ movieToInspect, setMovieToInspect ] = useState({} as Movie);
+    const [ showDialog, setShowDialog ] = useState(false);
+    const [ scrollReachedBottom, setScrollReachedBottom] = useState(false);
+
+    function MOVIES_ON_ROW_CLICK(movie: Movie) {
+        setMovieToInspect(movie);
+        setShowDialog(true);
+    }
+
+    function handleTableWrapScroll(e: any) {
+        const scrollableElement = e.target as HTMLDivElement;
+        const reachedBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
+
+        if(reachedBottom) {
+            setScrollReachedBottom(reachedBottom);
+            setTimeout(() => setScrollReachedBottom(false), 100);
+        }
+    }
+
+    return <div className={classes.movies}>
+
+        {/* MOVE TO ANOTHER COMPONENT */}
+        <Dialog show={showDialog}>
+            <MoviesComments movie={movieToInspect} closeFn={() => setShowDialog(false)} />
+        </Dialog>
+
+        <div className={classes.movies__tableWrap} onScroll={debounce(handleTableWrapScroll, 200)}>
+            {
+                DataTable<Movie>({
+                    CONFIG: {
+                        SHOW_ALL_ITEMS: false,
+                        NUM_ITEMS_TO_SHOW_INITTIALY: 20,
+                        NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
+                        SCROLL_REACHED_BOTTOM_STATE: scrollReachedBottom
+                    },
+                    DATA: MOVIES,
+                    COLUMNS: MOVIES_COLUMNS,
+                    TRANSFORMATIONS: MOVIES_TRANSFORMATIONS,
+                    FILTERS: MOVIES_FILTERS,
+                    SORTS: MOVIES_SORTING,
+                    onRowClick: MOVIES_ON_ROW_CLICK
+                })
+            }
+        </div>
+    </div>
+}
+
+
+
+{/* MOVE TO ANOTHER COMPONENT */}
+function MoviesComments(props: { movie: Movie, closeFn: Function}) {
+    return <div className={classes.movies__comments}>
+        <header>
+            <button onClick={() => props.closeFn()}>
+                <FiArrowLeft/>
+            </button>
+
+            <h1> {props.movie.title} Comments</h1>
+        </header>
+        
+        <ul>
+            { props.movie.actors.map(actor => <li>{ actor }</li>) }
+        </ul>
+
+        <footer>
+            <input type="text" />
+            <button>
+                <FaPaperPlane/>
+            </button>
+        </footer>
+    </div>;
 }
 
 export { MoviesTable }
@@ -90,30 +165,37 @@ function getMoviesRatingsOptions() {
 }
 
 function transformRatingToString(rating: number) {
-    return `${rating}/10`;
+    const numberOfFullStars = Math.floor(rating / 2);
+    const numberOfHalfStars = Math.floor(rating % 2);
+    const numberOfEmptyStarts = 5 - (numberOfFullStars + numberOfHalfStars);
+
+    const ratingText = `${rating}/10`;
+
+    return <div title={ratingText}>
+        { Array.from(new Array(numberOfFullStars), (_) => <ImStarFull />) }
+        { Array.from(new Array(numberOfHalfStars), (_) => <ImStarHalf />) }
+        { Array.from(new Array(numberOfEmptyStarts), (_) => <ImStarEmpty />) }
+    </div>;
 }
 
 function transformRevenueToString(revenue: number) {
-    if (!revenue) {
-        return ' --- ';
-    }
-
-    return `$${revenue} M`;
+    const str = revenue ? `$${revenue} M` : ' --- ';
+    return <>{str}</>;
 }
 
 function transformRuntimeToString(runtime: number) {
     if (runtime < 60) {
-        return `${runtime}m`;
+        return <>{`${runtime}m`}</>;
     }
 
     const hours = Math.floor(runtime / 60);
     const minutes = Math.floor(runtime % 60);
 
-    return `${hours}h ${minutes}m`;
+    return <>{`${hours}h ${minutes}m`}</>;
 }
 
 function transformGenreToString(genres: Array<string>) {
-    return genres.join(', ');
+    return <>{genres.join(', ')}</>;
 }
 
 function filterByTitle(movie: Movie, typedTitle: string) {
@@ -132,13 +214,13 @@ function filterByRating(movie: Movie, minRating: string) {
     return movie.rating > parseInt(minRating);
 }
 
-function sortString(accessor: keyof Movie, direction: 'ASC' | 'DESC', a: Movie, b: Movie) {
+function sortString(accessor: keyof Movie, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
 
     return multiplier * (a[accessor] as string).localeCompare(b[accessor] as string);
 }
 
-function sortNumber(accessor: keyof Movie, direction: 'ASC' | 'DESC', a: Movie, b: Movie) {
+function sortNumber(accessor: keyof Movie, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
 
     return multiplier * ((a[accessor] as number) - (b[accessor] as number));

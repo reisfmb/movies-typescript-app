@@ -4,12 +4,12 @@ import { DataTableHead } from "./DataTableHead"
 
 interface Column<Item> {
     accessor: keyof Item
-    name: string
+    view: JSX.Element
 }
 
 interface Transform<Item> {
     accessor: keyof Item
-    transform: (x: any) => string
+    transform: (x: any) => JSX.Element
 }
 
 interface Filter<Item> {
@@ -27,18 +27,28 @@ interface Sort<Item> {
     sort: (accessor: keyof Item, direction: 'ASC' | 'DESC', a: Item, b: Item) => number
 }
 
+
+interface DataTableConfig {
+    SHOW_ALL_ITEMS: boolean
+    NUM_ITEMS_TO_SHOW_INITTIALY?: number
+    NUM_ITEMS_TO_INCREASE_PER_SCROLL?: number
+    SCROLL_REACHED_BOTTOM_STATE: boolean
+}
 interface DataTableProps<Item> {
-    DATA: Array<Item>,
-    COLUMNS: Array<Column<Item>>,
-    TRANSFORMATIONS: Array<Transform<Item>>,
-    FILTERS: Array<Filter<Item>>,
+    CONFIG: DataTableConfig
+    DATA: Array<Item>
+    COLUMNS: Array<Column<Item>>
+    TRANSFORMATIONS: Array<Transform<Item>>
+    FILTERS: Array<Filter<Item>>
     SORTS: Array<Sort<Item>>
+    onRowClick: (item: Item) => void
+    
 }
 
 type SortDirection = 'ASC' | 'DESC';
 
 function DataTable<Item>(props: DataTableProps<Item>) {
-    const { DATA, COLUMNS, TRANSFORMATIONS, FILTERS, SORTS } = props;
+    const { CONFIG, DATA, COLUMNS, TRANSFORMATIONS, FILTERS, SORTS, onRowClick } = props;
 
     const [ currentSortDirectionsObj, setCurrentSortDirectionsObj ] = useState(getInitialSortsObj<Item>(COLUMNS));
     const [ currentFiltersObj, setCurrentFiltersObj ] = useState(getInitialFiltersObj<Item>(COLUMNS));
@@ -86,19 +96,19 @@ function DataTable<Item>(props: DataTableProps<Item>) {
             ...currentSortDirectionsObj,
             [accessor.toString()]: sortDirection === 'ASC' ? 'DESC' : 'ASC' 
         });
-
-        setFilteredData(filteredData.sort((a,b) => sort.sort(accessor, sortDirection, a, b)))
+        
+        setFilteredData(filteredData.sort((a,b) => sort.sort(accessor, sortDirection, a, b)));
     }
 
     return <table>
         { DataTableHead<Item>({COLUMNS, FILTERS, onSort: onSortHandler, onFilter: onFilterHandler}) }
-        { DataTableBody<Item>({DATA: filteredData, COLUMNS, TRANSFORMATIONS}) }
+        { DataTableBody<Item>({CONFIG, DATA: filteredData, COLUMNS, TRANSFORMATIONS, onRowClick}) }
     </table>
 }
 
 export { DataTable }
 
-export type { Column, Transform, Filter, Sort }
+export type { Column, Transform, Filter, Sort, SortDirection, DataTableConfig }
 
 // Helper Functions
 

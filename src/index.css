@@ -11,6 +11,12 @@
 }
 
 body {
+    height: 100vh;
     font-size: 12px;
     font-family: 'Poppins', sans-serif;
 }
+
+body > #root > div {
+    height: 100vh;
+}
+  

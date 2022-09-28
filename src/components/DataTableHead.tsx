@@ -14,7 +14,7 @@ function DataTableHead<Item>(props: DataTableHeadProps<Item>) {
     return <thead>
         <tr>
             { 
-                COLUMNS.map(({name, accessor}) => <th onClick={ () => onSort(accessor) }>{ name }</th>) 
+                COLUMNS.map(({view, accessor}) => <th onClick={ () => onSort(accessor) }>{ view }</th>) 
             }
         </tr>
 

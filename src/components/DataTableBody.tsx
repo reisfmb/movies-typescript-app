@@ -1,18 +1,35 @@
-import { Column, Transform } from "./DataTable";
+import { useEffect, useState } from "react";
+import { Column, Transform, DataTableConfig } from "./DataTable";
 
 interface DataTableBodyProps<Item> {
+    CONFIG: DataTableConfig
     DATA: Array<Item>
     COLUMNS: Array<Column<Item>>
-    TRANSFORMATIONS: Array<Transform<Item>>,
+    TRANSFORMATIONS: Array<Transform<Item>>
+    onRowClick: (item: Item) => void
 }
 
 function DataTableBody<Item>(props: DataTableBodyProps<Item>) {
-    const { DATA, COLUMNS, TRANSFORMATIONS } = props;
+    const { CONFIG, DATA, COLUMNS, TRANSFORMATIONS, onRowClick } = props;
+
+    const [increment, setIncrement] = useState(0);
+
+    useEffect(() => {
+
+        if(CONFIG.SCROLL_REACHED_BOTTOM_STATE) {
+            setIncrement(increment + (CONFIG.NUM_ITEMS_TO_INCREASE_PER_SCROLL || 0));
+        }
+
+    }, [CONFIG.SCROLL_REACHED_BOTTOM_STATE])
+
+    const DATA_TO_SHOW = CONFIG.SHOW_ALL_ITEMS 
+        ? DATA 
+        : DATA.slice(0, (CONFIG.NUM_ITEMS_TO_SHOW_INITTIALY || 0) + increment);
 
     return <tbody>
         {
-            DATA.map(item => <>
-                <tr>
+            DATA_TO_SHOW.map(item => <>
+                <tr onClick={() => onRowClick(item)}>
                     {
                         COLUMNS.map(({accessor}) => <>
                             <td>{ proccessData<Item>(item, accessor, TRANSFORMATIONS) }</td>
@@ -26,7 +43,7 @@ function DataTableBody<Item>(props: DataTableBodyProps<Item>) {
 
 // Helper Functions
 
-function proccessData<Item>(item: Item, accessor: keyof Item, transformations: Array<Transform<Item>>): string {
+function proccessData<Item>(item: Item, accessor: keyof Item, transformations: Array<Transform<Item>>): string | JSX.Element{
     const transformation = transformations.find(transformation => transformation.accessor.toString() === accessor.toString());
 
     if (transformation) {
