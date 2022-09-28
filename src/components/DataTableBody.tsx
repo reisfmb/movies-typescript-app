@@ -6,21 +6,22 @@ interface DataTableBodyProps<Item> {
     DATA: Array<Item>
     COLUMNS: Array<Column<Item>>
     TRANSFORMATIONS: Array<Transform<Item>>
+    SCROLL_REACHED_BOTTOM_STATE: boolean
     onRowClick: (item: Item) => void
 }
 
 function DataTableBody<Item>(props: DataTableBodyProps<Item>) {
-    const { CONFIG, DATA, COLUMNS, TRANSFORMATIONS, onRowClick } = props;
+    const { CONFIG, DATA, COLUMNS, TRANSFORMATIONS, SCROLL_REACHED_BOTTOM_STATE, onRowClick } = props;
 
     const [increment, setIncrement] = useState(0);
 
-    useEffect(() => {
+    useEffect(updateIncrement, [SCROLL_REACHED_BOTTOM_STATE])
 
-        if(CONFIG.SCROLL_REACHED_BOTTOM_STATE) {
+    function updateIncrement() {
+        if (SCROLL_REACHED_BOTTOM_STATE) {
             setIncrement(increment + (CONFIG.NUM_ITEMS_TO_INCREASE_PER_SCROLL || 0));
         }
-
-    }, [CONFIG.SCROLL_REACHED_BOTTOM_STATE])
+    }
 
     const DATA_TO_SHOW = CONFIG.SHOW_ALL_ITEMS 
         ? DATA 

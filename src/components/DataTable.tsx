@@ -1,3 +1,4 @@
+import { debounce } from "lodash"
 import { useEffect, useState } from "react"
 import { DataTableBody } from "./DataTableBody"
 import { DataTableHead } from "./DataTableHead"
@@ -29,13 +30,10 @@ interface Sort<Item> {
 
 interface DataTableConfig {
     SHOW_ALL_ITEMS: boolean
+    ICONS: { ASC: JSX.Element, DESC: JSX.Element }
     NUM_ITEMS_TO_SHOW_INITTIALY?: number
     NUM_ITEMS_TO_INCREASE_PER_SCROLL?: number
-    SCROLL_REACHED_BOTTOM_STATE?: boolean
-    ICONS: {
-        ASC: JSX.Element
-        DESC: JSX.Element
-    }
+    WRAPPER_DIV_CLASS?: string
 }
 interface DataTableProps<Item> {
     CONFIG: DataTableConfig
@@ -53,10 +51,10 @@ type SortDirection = 'ASC' | 'DESC';
 function DataTable<Item>(props: DataTableProps<Item>) {
     const { CONFIG, DATA, COLUMNS, TRANSFORMATIONS, FILTERS, SORTS, onRowClick } = props;
 
+    const [ scrollReachedBottom, setScrollReachedBottom] = useState(false);
     const [ currentSortDirectionsObj, setCurrentSortDirectionsObj ] = useState(getInitialSortsObj<Item>(COLUMNS));
     const [ currentFiltersObj, setCurrentFiltersObj ] = useState(getInitialFiltersObj<Item>(COLUMNS));
     const [ filteredData, setFilteredData ] = useState(DATA);
-
     useEffect(applyDataFilters, [currentFiltersObj]);
 
     function applyDataFilters() {
@@ -68,6 +66,20 @@ function DataTable<Item>(props: DataTableProps<Item>) {
         }, DATA);
 
         setFilteredData(newData);
+    }
+
+    function onScrollHandler(e: any) {
+        if(CONFIG.SHOW_ALL_ITEMS) {
+            return;
+        }
+
+        const scrollableElement = e.target as HTMLDivElement;
+        const reachedBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
+
+        if(reachedBottom) {
+            setScrollReachedBottom(reachedBottom);
+            setTimeout(() => setScrollReachedBottom(false), 100);
+        }
     }
 
     function onFilterHandler(accessor: keyof Item, inputValue: any) {
@@ -103,10 +115,32 @@ function DataTable<Item>(props: DataTableProps<Item>) {
         setFilteredData(filteredData.sort((a,b) => sort.sort(accessor, sortDirection, a, b)));
     }
 
-    return <table>
-        { DataTableHead<Item>({CONFIG, COLUMNS, FILTERS, SORTS, SORT_DIRECTIONS_STATE: currentSortDirectionsObj, onSort: onSortHandler, onFilter: onFilterHandler}) }
-        { DataTableBody<Item>({CONFIG, DATA: filteredData, COLUMNS, TRANSFORMATIONS, onRowClick}) }
-    </table>
+    return <div className={CONFIG.WRAPPER_DIV_CLASS} onScroll={debounce(onScrollHandler, 200)}>
+            <table>
+            { 
+                DataTableHead<Item>({
+                    CONFIG, 
+                    COLUMNS, 
+                    FILTERS, 
+                    SORTS, 
+                    SORT_DIRECTIONS_STATE: currentSortDirectionsObj, 
+                    onSort: onSortHandler, 
+                    onFilter: onFilterHandler
+                }) 
+            }
+
+            { 
+                DataTableBody<Item>({
+                    CONFIG, 
+                    DATA: filteredData, 
+                    COLUMNS, 
+                    TRANSFORMATIONS, 
+                    SCROLL_REACHED_BOTTOM_STATE: scrollReachedBottom, 
+                    onRowClick
+                }) 
+            }
+        </table>
+    </div>
 }
 
 export { DataTable }

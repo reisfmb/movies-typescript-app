@@ -72,21 +72,10 @@ const MOVIES_SORTING: Array<Sort<Movie>> = [
 function MoviesTable() {
     const [ movieToInspect, setMovieToInspect ] = useState({} as Movie);
     const [ showDialog, setShowDialog ] = useState(false);
-    const [ scrollReachedBottom, setScrollReachedBottom] = useState(false);
 
     function MOVIES_ON_ROW_CLICK(movie: Movie) {
         setMovieToInspect(movie);
         setShowDialog(true);
-    }
-
-    function handleTableWrapScroll(e: any) {
-        const scrollableElement = e.target as HTMLDivElement;
-        const reachedBottom = scrollableElement.scrollHeight - scrollableElement.scrollTop === scrollableElement.clientHeight;
-
-        if(reachedBottom) {
-            setScrollReachedBottom(reachedBottom);
-            setTimeout(() => setScrollReachedBottom(false), 100);
-        }
     }
 
     return <div className={classes.movies}>
@@ -96,29 +85,25 @@ function MoviesTable() {
             <MoviesComments movie={movieToInspect} closeFn={() => setShowDialog(false)} />
         </Dialog>
 
-        <div className={classes.movies__tableWrap} onScroll={debounce(handleTableWrapScroll, 200)}>
-            {
-                DataTable<Movie>({
-                    CONFIG: {
-                        SHOW_ALL_ITEMS: false,
-                        ICONS: { ASC: <MdOutlineKeyboardArrowUp/>, DESC: <MdOutlineKeyboardArrowDown/> },
-                        NUM_ITEMS_TO_SHOW_INITTIALY: 20,
-                        NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
-                        SCROLL_REACHED_BOTTOM_STATE: scrollReachedBottom,
-                    },
-                    DATA: MOVIES,
-                    COLUMNS: MOVIES_COLUMNS,
-                    TRANSFORMATIONS: MOVIES_TRANSFORMATIONS,
-                    FILTERS: MOVIES_FILTERS,
-                    SORTS: MOVIES_SORTING,
-                    onRowClick: MOVIES_ON_ROW_CLICK
-                })
-            }
-        </div>
+        {
+            DataTable<Movie>({
+                CONFIG: {
+                    SHOW_ALL_ITEMS: false,
+                    ICONS: { ASC: <MdOutlineKeyboardArrowUp/>, DESC: <MdOutlineKeyboardArrowDown/> },
+                    NUM_ITEMS_TO_SHOW_INITTIALY: 20,
+                    NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
+                    WRAPPER_DIV_CLASS: classes.movies__tableWrap,
+                },
+                DATA: MOVIES,
+                COLUMNS: MOVIES_COLUMNS,
+                TRANSFORMATIONS: MOVIES_TRANSFORMATIONS,
+                FILTERS: MOVIES_FILTERS,
+                SORTS: MOVIES_SORTING,
+                onRowClick: MOVIES_ON_ROW_CLICK
+            })
+        }
     </div>
 }
-
-
 
 {/* MOVE TO ANOTHER COMPONENT */}
 function MoviesComments(props: { movie: Movie, closeFn: Function}) {

@@ -83,8 +83,8 @@
 
         table {
             width: $table-width;
-            height: $table-height;
             border-collapse: collapse;
+            table-layout: fixed;
             
             thead {
                 position: sticky;
@@ -95,6 +95,7 @@
                 box-shadow: $box-shadow;
 
                 svg {
+                    transition: .1s;
                     color: var(--white);
                 }
     
@@ -107,18 +108,33 @@
                     }
 
                     th {
+                        transition: .1s;
                         &:hover {
                             cursor: pointer;
+                            color: var(--gray-300);
+                            svg {
+                                color: var(--gray-300);
+                            }
                         }
-                        padding: .5rem;
+                        padding: .5rem 2rem;
                     }
     
                     input[type="text"], select {
+                        transition: .1s;
+                        width: 100%;
                         border: none;
                         background-color: transparent;
                         border: 1px solid var(--gray-100);
                         color: var(--white);
                         padding: .5rem;
+
+                        &:hover {
+                            background-color: var(--gray-100);
+                            color: var(--blue);
+                            ::placeholder {
+                                color: var(--blue);
+                            }
+                        }
                     }
                     ::placeholder {
                         color: var(--gray-100);
