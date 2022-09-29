@@ -34,6 +34,14 @@ const MOVIES: Array<Movie> = MovieJson.map(movie => ({
     year: parseInt(movie.year),
 }));
 
+const MOVIES_DATATABLE_CONFIG = {
+    SHOW_ALL_ITEMS: false,
+    ICONS: { ASC: <MdOutlineKeyboardArrowUp/>, DESC: <MdOutlineKeyboardArrowDown/> },
+    NUM_ITEMS_TO_SHOW_INITTIALY: 20,
+    NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
+    WRAPPER_DIV_CLASS: classes.movies__tableWrap,
+}
+
 const MOVIES_COLUMNS: Array<Column<Movie>> = [
     { accessor: 'title', view: <><BiMovie/> {'Title'}</> },
     { accessor: 'year', view: <><BiCalendarAlt/> {'Year'}</> },
@@ -41,14 +49,14 @@ const MOVIES_COLUMNS: Array<Column<Movie>> = [
     { accessor: 'revenue', view: <><MdAttachMoney/> {'Revenue'}</> },
     { accessor: 'rating', view: <><ImStarEmpty/> {'Rating'}</> },
     { accessor: 'genre', view: <><TbListSearch/> {'Genres'}</> },
-]
+];
 
 const MOVIES_TRANSFORMATIONS: Array<Transform<Movie>> = [
     { accessor: 'rating', transform: transformRatingToString },
     { accessor: 'revenue', transform: transformRevenueToString },
     { accessor: 'runtime', transform: transformRuntimeToString },
     { accessor: 'genre', transform: transformGenreToString },
-]
+];
 
 const MOVIES_FILTERS: Array<Filter<Movie>> = [
     { accessor: 'title', filter: filterByTitle, input: { type: 'text', placeholder: 'Filter by Title' } },
@@ -63,7 +71,7 @@ const MOVIES_SORTING: Array<Sort<Movie>> = [
     { accessor: 'runtime', sort: sortNumber },
     { accessor: 'revenue', sort: sortNumber },
     { accessor: 'rating', sort: sortNumber },
-]
+];
 
 function MoviesTable() {
     const [ movieToInspect, setMovieToInspect ] = useState({} as Movie);
@@ -77,18 +85,14 @@ function MoviesTable() {
     return <div className={classes.movies}>
 
         <Dialog show={showDialog}>
-            <MoviesComments movie={movieToInspect} closeFn={() => setShowDialog(false)} />
+            <MoviesComments 
+                movie={movieToInspect}
+                closeFn={() => setShowDialog(false)} />
         </Dialog>
 
         {
             DataTable<Movie>({
-                CONFIG: {
-                    SHOW_ALL_ITEMS: false,
-                    ICONS: { ASC: <MdOutlineKeyboardArrowUp/>, DESC: <MdOutlineKeyboardArrowDown/> },
-                    NUM_ITEMS_TO_SHOW_INITTIALY: 20,
-                    NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
-                    WRAPPER_DIV_CLASS: classes.movies__tableWrap,
-                },
+                CONFIG: MOVIES_DATATABLE_CONFIG,
                 DATA: MOVIES,
                 COLUMNS: MOVIES_COLUMNS,
                 TRANSFORMATIONS: MOVIES_TRANSFORMATIONS,
@@ -106,23 +110,7 @@ export type { Movie }
 
 // Helper functions
 
-function getMoviesGenresOptions(movies: Array<Movie>) {
-    const set = new Set();
-    movies.forEach(({genre}) => genre.forEach(t => set.add(t)));
-    return ((Array.from(set).map(genre => ({ text: genre, value: genre }))) as Array<{text: string, value: string}>)
-        .sort((a,b) => a.text.localeCompare(b.text));
-        
-}
-
-function getMoviesYearsOptions(movies: Array<Movie>) {
-    return Array.from(new Set(movies.map(({year}) => year))).map(year => ({ text: year.toString(), value: year.toString() }))
-        .sort((a,b) => a.text.localeCompare(b.text));
-}
-
-function getMoviesRatingsOptions() {
-    return Array.from(new Array(9), (_, i) => ({ text: (i+1).toString(), value: (i+1).toString() }));
-}
-
+// TRANSFORMS
 function transformRatingToString(rating: number) {
     const numberOfFullStars = Math.floor(rating / 2);
     const numberOfHalfStars = Math.floor(rating % 2);
@@ -157,6 +145,8 @@ function transformGenreToString(genres: Array<string>) {
     return <>{genres.join(', ')}</>;
 }
 
+
+// FILTERS
 function filterByTitle(movie: Movie, typedTitle: string) {
     return movie.title.toLowerCase().includes(typedTitle.toLowerCase());
 }
@@ -173,16 +163,35 @@ function filterByRating(movie: Movie, minRating: string) {
     return movie.rating > parseInt(minRating);
 }
 
+// SORTS
+
 // TODO: fix any typing
 function sortString(accessor: string, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
-
     return multiplier * ((a as any)[accessor] as string).localeCompare((b as any)[accessor] as string);
 }
 
 // TODO: fix any typing
 function sortNumber(accessor: string, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
-
     return multiplier * (((a as any)[accessor] as number) - ((b as any)[accessor] as number));
+}
+
+//
+
+function getMoviesGenresOptions(movies: Array<Movie>) {
+    const set = new Set();
+    movies.forEach(({genre}) => genre.forEach(t => set.add(t)));
+    return ((Array.from(set).map(genre => ({ text: genre, value: genre }))) as Array<{text: string, value: string}>)
+        .sort((a,b) => a.text.localeCompare(b.text));
+        
+}
+
+function getMoviesYearsOptions(movies: Array<Movie>) {
+    return Array.from(new Set(movies.map(({year}) => year))).map(year => ({ text: year.toString(), value: year.toString() }))
+        .sort((a,b) => a.text.localeCompare(b.text));
+}
+
+function getMoviesRatingsOptions() {
+    return Array.from(new Array(9), (_, i) => ({ text: (i+1).toString(), value: (i+1).toString() }));
 }
