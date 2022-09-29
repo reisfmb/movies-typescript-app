@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
+:root {
+    --white: white;
+    --gray-100: #f7f7f7;
+    --gray-300: lightgray;
+    --gray-500: gray;
+    --black: black;
+    --blue: #3f51b5;
+}
 * {
     margin: 0;
     padding: 0;

@@ -1,17 +1,13 @@
 import { useState } from 'react';
+import classes from '../styles/MoviesTable.module.scss';
 import MovieJson from '../data/movies.json';
 import { Column, DataTable, Filter, Sort, SortDirection, Transform } from "./DataTable";
 import { Dialog } from './Dialog';
-import classes from './MoviesTable.module.scss';
+import { MoviesComments } from './MoviesComments';
 import { ImStarFull, ImStarHalf, ImStarEmpty } from 'react-icons/im';
-import { FiArrowLeft } from 'react-icons/fi';
-import { FaPaperPlane } from 'react-icons/fa';
 import { BiMovie, BiCalendarAlt } from 'react-icons/bi';
 import { MdAttachMoney, MdOutlineKeyboardArrowUp, MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { TbClock, TbListSearch } from 'react-icons/tb';
-
-import { debounce } from 'lodash';
-
 interface Movie {
     actors: Array<string>
     description: string
@@ -106,30 +102,11 @@ function MoviesTable() {
 }
 
 {/* MOVE TO ANOTHER COMPONENT */}
-function MoviesComments(props: { movie: Movie, closeFn: Function}) {
-    return <div className={classes.movies__comments}>
-        <header>
-            <button onClick={() => props.closeFn()}>
-                <FiArrowLeft/>
-            </button>
 
-            <h1> {props.movie.title} Comments</h1>
-        </header>
-        
-        <ul>
-            { props.movie.actors.map(actor => <li>{ actor }</li>) }
-        </ul>
-
-        <footer>
-            <input type="text" />
-            <button>
-                <FaPaperPlane/>
-            </button>
-        </footer>
-    </div>;
-}
 
 export { MoviesTable }
+
+export type { Movie }
 
 // Helper functions
 

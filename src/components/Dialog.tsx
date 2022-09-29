@@ -1,4 +1,4 @@
-import classes from './Dialog.module.scss';
+import classes from '../styles/Dialog.module.scss';
 
 interface DialogProps {
     show: boolean
