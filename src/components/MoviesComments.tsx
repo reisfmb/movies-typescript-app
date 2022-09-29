@@ -47,7 +47,11 @@ function MoviesComments(props: { movie: Movie, closeFn: Function}) {
                 <FiArrowLeft/>
             </button>
 
-            <h1> {movie.title} Comments</h1>
+            <h1>
+                {movie.title}
+            </h1>
+
+            <small>{ isLoading ? 'loading...' : `${comments.length} comment(s)` } </small>
         </header>
 
         <ul>
@@ -59,7 +63,10 @@ function MoviesComments(props: { movie: Movie, closeFn: Function}) {
         </ul>
 
         <footer>
-            <input type="text" onChange={ (e) => setCommentInput(e.target.value) } value={commentInput} />
+            <input 
+                type="text" 
+                placeholder="Write your comment here..."
+                onChange={ (e) => setCommentInput(e.target.value) } value={commentInput} />
             <button onClick={() => handleClick(movie.title)}>
                 <FaPaperPlane/>
             </button>
