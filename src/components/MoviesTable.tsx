@@ -76,7 +76,6 @@ function MoviesTable() {
 
     return <div className={classes.movies}>
 
-        {/* MOVE TO ANOTHER COMPONENT */}
         <Dialog show={showDialog}>
             <MoviesComments movie={movieToInspect} closeFn={() => setShowDialog(false)} />
         </Dialog>
@@ -100,9 +99,6 @@ function MoviesTable() {
         }
     </div>
 }
-
-{/* MOVE TO ANOTHER COMPONENT */}
-
 
 export { MoviesTable }
 
@@ -177,14 +173,16 @@ function filterByRating(movie: Movie, minRating: string) {
     return movie.rating > parseInt(minRating);
 }
 
-function sortString(accessor: keyof Movie, direction: SortDirection, a: Movie, b: Movie) {
+// TODO: fix any typing
+function sortString(accessor: string, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
 
-    return multiplier * (a[accessor] as string).localeCompare(b[accessor] as string);
+    return multiplier * ((a as any)[accessor] as string).localeCompare((b as any)[accessor] as string);
 }
 
-function sortNumber(accessor: keyof Movie, direction: SortDirection, a: Movie, b: Movie) {
+// TODO: fix any typing
+function sortNumber(accessor: string, direction: SortDirection, a: Movie, b: Movie) {
     const multiplier = direction === 'ASC' ? 1 : -1;
 
-    return multiplier * ((a[accessor] as number) - (b[accessor] as number));
+    return multiplier * (((a as any)[accessor] as number) - ((b as any)[accessor] as number));
 }

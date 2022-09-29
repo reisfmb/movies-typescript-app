@@ -6,8 +6,8 @@ interface DataTableHeadProps<Item> {
     FILTERS: Array<Filter<Item>>
     SORTS: Array<Sort<Item>>
     SORT_DIRECTIONS_STATE: { [key: string]: string }
-    onSort: (accessor: keyof Item) => void
-    onFilter: (accessor: keyof Item, inputValue: any) => void
+    onSort: (accessor: string) => void
+    onFilter: (accessor: string, inputValue: any) => void
 }
 
 function DataTableHead<Item>(props: DataTableHeadProps<Item>) {    
@@ -56,7 +56,7 @@ function ShowSortIcon(direction: string, iconASC: JSX.Element, iconDESC: JSX.Ele
 }
 
 // TODO: Implement support for other input types
-function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: keyof Item, inputValue: any) => void) {
+function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: string, inputValue: any) => void) {
 
     if(filter.input.type === 'text') {
         return <input 

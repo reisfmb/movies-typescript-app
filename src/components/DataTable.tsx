@@ -4,17 +4,17 @@ import { DataTableBody } from "./DataTableBody"
 import { DataTableHead } from "./DataTableHead"
 
 interface Column<Item> {
-    accessor: keyof Item
+    accessor: string
     view: JSX.Element
 }
 
 interface Transform<Item> {
-    accessor: keyof Item
+    accessor: string
     transform: (x: any) => JSX.Element
 }
 
 interface Filter<Item> {
-    accessor: keyof Item
+    accessor: string
     filter: (item: Item, inputValue: any) => boolean
     input: {
         type: 'text' | 'select'
@@ -24,8 +24,8 @@ interface Filter<Item> {
 }
 
 interface Sort<Item> {
-    accessor: keyof Item
-    sort: (accessor: keyof Item, direction: 'ASC' | 'DESC', a: Item, b: Item) => number
+    accessor: string
+    sort: (accessor: string, direction: 'ASC' | 'DESC', a: Item, b: Item) => number
 }
 
 interface DataTableConfig {
@@ -82,7 +82,7 @@ function DataTable<Item>(props: DataTableProps<Item>) {
         }
     }
 
-    function onFilterHandler(accessor: keyof Item, inputValue: any) {
+    function onFilterHandler(accessor: string, inputValue: any) {
         const filter = FILTERS.find(filter => filter.accessor.toString() === accessor.toString());
         
         if(!filter) return;
@@ -100,7 +100,7 @@ function DataTable<Item>(props: DataTableProps<Item>) {
         }
     }
 
-    function onSortHandler(accessor: keyof Item) {
+    function onSortHandler(accessor: string) {
         const sort = SORTS.find(sort => sort.accessor.toString() === accessor.toString());
 
         if(!sort) return;

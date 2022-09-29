@@ -1,3 +1,4 @@
+import { get } from "lodash";
 import { useEffect, useState } from "react";
 import { Column, Transform, DataTableConfig } from "./DataTable";
 
@@ -44,14 +45,15 @@ function DataTableBody<Item>(props: DataTableBodyProps<Item>) {
 
 // Helper Functions
 
-function proccessData<Item>(item: Item, accessor: keyof Item, transformations: Array<Transform<Item>>): string | JSX.Element{
+function proccessData<Item>(item: Item, accessor: string, transformations: Array<Transform<Item>>): string | JSX.Element{
     const transformation = transformations.find(transformation => transformation.accessor.toString() === accessor.toString());
-
-    if (transformation) {
-        return transformation.transform(item[accessor]);
+    const value = get(item, accessor, '');
+    
+    if (value && transformation) {
+        return transformation.transform(value);
     }
 
-    return (item[accessor] || '' as any).toString();
+    return value;
 }
 
 export { DataTableBody };
