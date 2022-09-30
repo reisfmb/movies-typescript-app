@@ -1,6 +1,7 @@
 # How to run the code ?
 - Clone the repo
 - Open the terminal and run `npm install` and then `npm run dev`
+- Open http://localhost:5173/
 
 # Explanation of architecture
 - The data comes from the `movies.json` file in the `data` folder.
