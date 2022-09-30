@@ -1,6 +1,6 @@
-import { Movie } from "../components/MoviesTable";
-import { SortDirection } from "../components/DataTable/DataTable";
-import { ImStarEmpty, ImStarFull, ImStarHalf } from "react-icons/im";
+import { Movie } from '../components/MoviesTable';
+import { SortDirection } from '../components/DataTable/DataTable';
+import { ImStarEmpty, ImStarFull, ImStarHalf } from 'react-icons/im';
 
 function transformRating(rating: number) {
     const numberOfFullStars = Math.floor(rating / 2);
@@ -123,7 +123,7 @@ const TRANSFORMS = {
     transformRevenue,
     transformRuntime,
     transformGenre
-}
+};
 
 const FILTERS = {
     filterByTitle,
@@ -132,12 +132,12 @@ const FILTERS = {
     filterByRuntime,
     filterByRevenue,
     filterByRating
-}
+};
 
 const SORTS = {
     sortString,
     sortNumber
-}
+};
 
 const GET_OPTIONS = {
     getMoviesGenresOptions,
@@ -145,11 +145,11 @@ const GET_OPTIONS = {
     getMoviesRuntimeOptions,
     getMoviesRevenueOptions,
     getMoviesRatingsOptions
-}
+};
 
 export {
     TRANSFORMS,
     FILTERS,
     SORTS,
     GET_OPTIONS
-}
+};

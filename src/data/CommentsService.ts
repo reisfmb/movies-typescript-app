@@ -29,4 +29,4 @@ async function updateComments(docId: string, updatedComments: Array<string>): Pr
 export {
     getComments,
     updateComments
-}
+};

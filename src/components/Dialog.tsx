@@ -14,4 +14,4 @@ function Dialog(props: DialogProps) {
     </>;
 }
 
-export { Dialog }
+export { Dialog };

@@ -1,6 +1,6 @@
-import { get } from "lodash";
-import { useEffect, useState } from "react";
-import { Column, Transform, DataTableConfig } from "./DataTable";
+import { get } from 'lodash';
+import { useEffect, useState } from 'react';
+import { Column, Transform, DataTableConfig } from './DataTable';
 
 interface DataTableBodyProps<Item> {
     CONFIG: DataTableConfig
@@ -16,7 +16,7 @@ function DataTableBody<Item>(props: DataTableBodyProps<Item>) {
 
     const [increment, setIncrement] = useState(0);
 
-    useEffect(updateIncrement, [SCROLL_REACHED_BOTTOM_STATE])
+    useEffect(updateIncrement, [SCROLL_REACHED_BOTTOM_STATE]);
 
     function updateIncrement() {
         if (SCROLL_REACHED_BOTTOM_STATE) {

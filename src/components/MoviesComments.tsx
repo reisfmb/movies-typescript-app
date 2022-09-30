@@ -4,8 +4,8 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { getComments, updateComments } from '../data/CommentsService';
 import { useEffect, useState } from 'react';
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function MoviesComments(props: { movie: Movie, closeFn: Function}) {
     const { movie, closeFn } = props;
@@ -74,7 +74,7 @@ function MoviesComments(props: { movie: Movie, closeFn: Function}) {
     </div>;
 }
 
-export { MoviesComments }
+export { MoviesComments };
 
 function movieTitleToDocId(movieTitle: string): string {
     return movieTitle.replace(/ /g, '-').toLowerCase();

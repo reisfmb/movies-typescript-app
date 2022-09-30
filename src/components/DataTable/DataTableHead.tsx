@@ -1,4 +1,4 @@
-import { DataTableConfig, Column, Filter, Sort } from "./DataTable";
+import { DataTableConfig, Column, Filter, Sort } from './DataTable';
 
 interface DataTableHeadProps<Item> {
     CONFIG: DataTableConfig
@@ -65,7 +65,7 @@ function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: string, i
             type={ filter.input.type }
             placeholder={ filter.input.placeholder }
             onChange={ onChange }
-        />
+        />;
     }
 
     if(filter.input.type === 'select') {
@@ -76,7 +76,7 @@ function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: string, i
                         <option value={ value }>{ text }</option>
                     </>)
                 }
-        </select>
+        </select>;
     }
 }
 

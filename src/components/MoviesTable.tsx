@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import classes from '../styles/MoviesTable.module.scss';
 import MovieJson from '../data/movies.json';
-import { Column, DataTable, Filter, Sort, Transform } from "./DataTable/DataTable";
+import { Column, DataTable, Filter, Sort, Transform } from './DataTable/DataTable';
 import { Dialog } from './Dialog';
 import { MoviesComments } from './MoviesComments';
 import { TRANSFORMS, FILTERS, SORTS, GET_OPTIONS } from '../helpers/Movie';
@@ -41,7 +41,7 @@ const MOVIES_DATATABLE_CONFIG = {
     NUM_ITEMS_TO_SHOW_INITTIALY: 20,
     NUM_ITEMS_TO_INCREASE_PER_SCROLL: 10,
     WRAPPER_DIV_CLASS: classes.movies__tableWrap,
-}
+};
 
 const MOVIES_COLUMNS: Array<Column<Movie>> = [
     { accessor: 'title', view: <><BiMovie/> {'Title'}</> },
@@ -104,9 +104,9 @@ function MoviesTable() {
                 onRowClick: MOVIES_ON_ROW_CLICK
             })
         }
-    </div>
+    </div>;
 }
 
-export { MoviesTable }
+export { MoviesTable };
 
-export type { Movie }
+export type { Movie };

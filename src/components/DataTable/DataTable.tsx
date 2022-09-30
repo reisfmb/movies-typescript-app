@@ -1,7 +1,7 @@
-import { debounce } from "lodash"
-import { useEffect, useState } from "react"
-import { DataTableBody } from "./DataTableBody"
-import { DataTableHead } from "./DataTableHead"
+import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
+import { DataTableBody } from './DataTableBody';
+import { DataTableHead } from './DataTableHead';
 
 interface Column<Item> {
     accessor: string
@@ -140,12 +140,12 @@ function DataTable<Item>(props: DataTableProps<Item>) {
                 }) 
             }
         </table>
-    </div>
+    </div>;
 }
 
-export { DataTable }
+export { DataTable };
 
-export type { Column, Transform, Filter, Sort, SortDirection, DataTableConfig }
+export type { Column, Transform, Filter, Sort, SortDirection, DataTableConfig };
 
 // Helper Functions
 
