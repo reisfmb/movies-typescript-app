@@ -35,3 +35,4 @@
 # FYI
 - Firebase DB connection config was left on a file on purpose
 - The reason is to allow the proper testing of the front-end application without having the need to set up a new firestore database
+- `DataTable` component is abstract enough in order to make it a npm package in future :)
