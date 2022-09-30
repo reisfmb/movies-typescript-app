@@ -58,17 +58,18 @@ function ShowSortIcon(direction: string, iconASC: JSX.Element, iconDESC: JSX.Ele
 // TODO: Implement support for other input types
 function processInput<Item>(filter: Filter<Item>, onFilter: (accessor: string, inputValue: any) => void) {
 
+    const onChange = (e: any) => onFilter(filter.accessor, e.target.value);
+
     if(filter.input.type === 'text') {
         return <input 
             type={ filter.input.type }
             placeholder={ filter.input.placeholder }
-            onChange={ (e) => onFilter(filter.accessor, e.target.value) }
+            onChange={ onChange }
         />
     }
 
     if(filter.input.type === 'select') {
-        return <select 
-            onChange={ (e) => onFilter(filter.accessor, e.target.value) }>
+        return <select onChange={ onChange }>
                 <option value="">{ filter.input.placeholder }</option>
                 {
                     (filter.input.options || []).map(({text, value}) => <>

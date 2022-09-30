@@ -18,7 +18,7 @@ interface Filter<Item> {
     filter: (item: Item, inputValue: any) => boolean
     input: {
         type: 'text' | 'select'
-        placeholder: string
+        placeholder?: string
         options?: Array<{text: string, value: string}>
     }
 }

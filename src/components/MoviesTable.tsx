@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import classes from '../styles/MoviesTable.module.scss';
 import MovieJson from '../data/movies.json';
-import { Column, DataTable, Filter, Sort, SortDirection, Transform } from "./DataTable";
+import { Column, DataTable, Filter, Sort, SortDirection, Transform } from "./DataTable/DataTable";
 import { Dialog } from './Dialog';
 import { MoviesComments } from './MoviesComments';
 import { ImStarFull, ImStarHalf, ImStarEmpty } from 'react-icons/im';
@@ -52,16 +52,18 @@ const MOVIES_COLUMNS: Array<Column<Movie>> = [
 ];
 
 const MOVIES_TRANSFORMATIONS: Array<Transform<Movie>> = [
-    { accessor: 'rating', transform: transformRatingToString },
-    { accessor: 'revenue', transform: transformRevenueToString },
-    { accessor: 'runtime', transform: transformRuntimeToString },
-    { accessor: 'genre', transform: transformGenreToString },
+    { accessor: 'rating', transform: transformRating },
+    { accessor: 'revenue', transform: transformRevenue },
+    { accessor: 'runtime', transform: transformRuntime },
+    { accessor: 'genre', transform: transformGenre },
 ];
 
 const MOVIES_FILTERS: Array<Filter<Movie>> = [
     { accessor: 'title', filter: filterByTitle, input: { type: 'text', placeholder: 'Filter by Title' } },
     { accessor: 'genre', filter: filterByGenre, input: { type: 'select', placeholder: 'Filter by Genre', options: getMoviesGenresOptions(MOVIES) } },
     { accessor: 'year', filter: filterByYear, input: { type: 'select', placeholder: 'Filter by year', options: getMoviesYearsOptions(MOVIES) } },
+    { accessor: 'runtime', filter: filterByRuntime, input: { type: 'select', placeholder: 'Between', options: getMoviesRuntimeOptions(MOVIES) } },
+    { accessor: 'revenue', filter: filterByRevenue, input: { type: 'select', placeholder: 'Between', options: getMoviesRevenueOptions(MOVIES) } },
     { accessor: 'rating', filter: filterByRating, input: { type: 'select', placeholder: 'Above', options: getMoviesRatingsOptions() } }
 ];
 
@@ -111,7 +113,7 @@ export type { Movie }
 // Helper functions
 
 // TRANSFORMS
-function transformRatingToString(rating: number) {
+function transformRating(rating: number) {
     const numberOfFullStars = Math.floor(rating / 2);
     const numberOfHalfStars = Math.floor(rating % 2);
     const numberOfEmptyStarts = 5 - (numberOfFullStars + numberOfHalfStars);
@@ -125,12 +127,12 @@ function transformRatingToString(rating: number) {
     </div>;
 }
 
-function transformRevenueToString(revenue: number) {
+function transformRevenue(revenue: number) {
     const str = revenue ? `$${revenue} M` : ' --- ';
     return <>{str}</>;
 }
 
-function transformRuntimeToString(runtime: number) {
+function transformRuntime(runtime: number) {
     if (runtime < 60) {
         return <>{`${runtime}m`}</>;
     }
@@ -141,7 +143,7 @@ function transformRuntimeToString(runtime: number) {
     return <>{`${hours}h ${minutes}m`}</>;
 }
 
-function transformGenreToString(genres: Array<string>) {
+function transformGenre(genres: Array<string>) {
     return <>{genres.join(', ')}</>;
 }
 
@@ -157,6 +159,16 @@ function filterByGenre(movie: Movie, selectedGenre: string) {
 
 function filterByYear(movie: Movie, selectedYear: string) {
     return movie.year.toString() === selectedYear;
+}
+
+function filterByRuntime(movie: Movie, selectedRange: `${string},${string}`) {
+    const [min, max] = selectedRange.split(',').map(n => Number(n));
+    return min <= movie.runtime && movie.runtime <= max;
+}
+
+function filterByRevenue(movie: Movie, selectedRange: `${string},${string}`) {
+    const [min, max] = selectedRange.split(',').map(n => Number(n));
+    return min <= movie.revenue && movie.revenue <= max;
 }
 
 function filterByRating(movie: Movie, minRating: string) {
@@ -192,6 +204,32 @@ function getMoviesYearsOptions(movies: Array<Movie>) {
         .sort((a,b) => a.text.localeCompare(b.text));
 }
 
+function getMoviesRuntimeOptions(movies: Array<Movie>) {
+    return numericalOptionsRangeHelper(movies, 'runtime', 30).map(item => ({
+        text: `${transformRuntime(item.min).props.children} to ${transformRuntime(item.max).props.children}`,
+        value: `${item.min}, ${item.max}`,
+    }));
+}
+
+function getMoviesRevenueOptions(movies: Array<Movie>) {
+    return numericalOptionsRangeHelper(movies, 'revenue', 100).map(item => ({
+        text: `${item.min} to ${item.max}`,
+        value: `${item.min}, ${item.max}`,
+    }));
+}
+
 function getMoviesRatingsOptions() {
     return Array.from(new Array(9), (_, i) => ({ text: (i+1).toString(), value: (i+1).toString() }));
+}
+
+function numericalOptionsRangeHelper(movies: Array<Movie>, key: keyof Movie, step: number) {
+    const sortedMovies = movies.sort((a,b) => sortNumber(key, 'ASC', a, b));
+    const min = sortedMovies[0][key];
+    const max = sortedMovies[sortedMovies.length - 1][key];
+    const numOfOptions = Math.ceil(Number(max) / step);
+
+    return Array.from(new Array(numOfOptions), (_, i) => ({
+        min: i * step,
+        max: (i + 1) * step
+    })).filter((option) => min <= option.max);
 }

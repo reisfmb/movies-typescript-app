@@ -49,7 +49,7 @@ function proccessData<Item>(item: Item, accessor: string, transformations: Array
     const transformation = transformations.find(transformation => transformation.accessor.toString() === accessor.toString());
     const value = get(item, accessor, '');
     
-    if (value && transformation) {
+    if (value !== undefined && transformation) {
         return transformation.transform(value);
     }
 
